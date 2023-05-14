@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var volumeElement = sound.querySelector("input.sound-volume");
         var imageElement = sound.querySelector("img");
         var nameElement =  sound.querySelector("div.sound-name");
+        var downloadElement =  sound.querySelector("a.sound-download");
         var mutedVolume = null;
 	var currentTrack = 0;
 
@@ -107,8 +108,13 @@ document.addEventListener("DOMContentLoaded", function() {
         var tracks = Array.from(sound.querySelectorAll("ul li"));
         function setTrack(i) {
             currentTrack = i;
-            audioElement.src = tracks[i].dataset.src;
+            var src = tracks[i].dataset.src;
+            audioElement.src = src;
             audioElement.load();
+            if (downloadElement) {
+                downloadElement.href = src;
+                downloadElement.download = src.substr(src.lastIndexOf("/")+1);
+            }
             imageElement.src = tracks[i].dataset.cover;
             nameElement.innerHTML = tracks[i].firstChild.innerHTML;
             tracks.forEach(function(track) {
