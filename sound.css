@@ -1,0 +1,215 @@
+/* Sound extension, https://github.com/GiovanniSalmeri/yellow-sound */
+
+/* General */
+
+div.sound {
+    --soundbg: #eeeeee;
+    --soundbutton: #a0a0a0;
+    --soundthumb: #a0a0a0;
+    --soundbuttonhover: #c0c0c0;
+    --soundrange: #606060;
+    --soundcurrent: #dddddd;
+    width: 100%;
+    position: relative;
+    margin: 10px 0;
+    background-color: var(--soundbg);
+    border-radius: 5px;
+    box-sizing: border-box;
+    container: player / inline-size;
+}
+div.sound * {
+    box-sizing: border-box;
+}
+div.sound div.sound-heading {
+    position: relative;
+}
+div.sound img {
+    object-fit: cover;
+    display: block;
+    width: 100px;
+    height: 100px;
+    padding: 5px;
+    border-radius: 10px;
+}
+div.sound div.sound-name {
+    position: absolute;
+    top: 0px;
+    left: 110px;
+    width: calc(100% - 140px);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2; 
+}
+
+/* Controls */
+
+div.sound div.sound-controls {
+    width: calc(100% - 120px);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: absolute;
+    bottom: 5px;
+    left: 110px;
+}
+div.sound div.sound-aux {
+    position: absolute;
+    top: 4px;
+    right: 10px;
+}
+div.sound div.sound-controls button {
+    display: inline-block;
+    line-height: 1em;
+    border-radius: 50%;
+    border-width: 0;
+    padding: 0;
+    height: 25px;
+    width: 25px;
+    background-color: var(--soundbutton);
+    flex: none;
+}
+div.sound div.sound-controls button:hover {
+    background-color: var(--soundbuttonhover);
+}
+div.sound div.sound-controls input.sound-timeline {
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: 60px;
+}
+div.sound div.sound-controls input.sound-volume {
+    width: 60px;
+}
+div.sound div.sound-controls input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background-color: var(--soundrange);
+    border-radius: 0;
+}
+div.sound div.sound-controls input[type="range"]:disabled {
+    display: none;
+}
+div.sound div.sound-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: var(--soundthumb);
+}
+div.sound div.sound-controls input[type="range"]::-moz-range-thumb {
+    -moz-appearance: none;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    border-width: 0;
+    background-color: var(--soundthumb);
+}
+div.sound div.sound-controls input[type="range"]::-webkit-slider-thumb:hover {
+    background-color: var(--soundbuttonhover);
+}
+div.sound div.sound-controls input[type="range"]::-moz-range-thumb:hover {
+    background-color: var(--soundbuttonhover);
+}
+div.sound div.sound-aux a.sound-download::before {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'%3E%3Cpath d='M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7l7-7z' fill='%23717171' /%3E%3C/svg%3E");
+}
+div.sound div.sound-controls button.sound-play[aria-pressed="true"]::before {
+    content: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M597.333333 810.666667h170.666667V213.333333h-170.666667M256 810.666667h170.666667V213.333333H256v597.333334z' fill='%23717171' /%3E%3C/svg%3E");
+}
+div.sound div.sound-controls button.sound-play[aria-pressed="false"]::before {
+    content: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M341.333333 219.306667v597.333333l469.333334-298.666667-469.333334-298.666666z' fill='%23717171' /%3E%3C/svg%3E");
+}
+div.sound div.sound-controls button.sound-mute[aria-pressed="true"]::before {
+    content: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M512 170.666667L422.826667 259.84 512 349.013333M182.186667 128L128 182.186667 329.813333 384H128v256h170.666667l213.333333 213.333333v-287.146666l181.333333 181.76c-28.586667 21.76-60.586667 39.68-96 49.92v88.32c58.88-13.653333 112.213333-40.533333 157.013334-77.226667L841.813333 896 896 841.813333l-384-384M810.666667 512c0 40.106667-8.533333 77.653333-23.04 112.64l64.426666 64.426667A380.416 380.416 0 0 0 896 512c0-182.613333-128-335.36-298.666667-374.186667v87.893334c123.306667 36.693333 213.333333 151.04 213.333334 286.293333m-106.666667 0c0-75.52-42.666667-140.373333-106.666667-171.946667v94.293334l104.533334 104.533333c2.133333-8.533333 2.133333-17.92 2.133333-26.88z' fill='%23717171' /%3E%3C/svg%3E");
+}
+div.sound div.sound-controls button.sound-mute[aria-pressed="false"]::before {
+    content: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M597.333333 137.813333v87.893334c123.306667 36.693333 213.333333 151.04 213.333334 286.293333s-90.026667 249.173333-213.333334 285.866667v88.32c170.666667-38.826667 298.666667-191.573333 298.666667-374.186667 0-182.613333-128-335.36-298.666667-374.186667M704 512c0-75.52-42.666667-140.373333-106.666667-171.946667V682.666667c64-30.293333 106.666667-95.573333 106.666667-170.666667M128 384v256h170.666667l213.333333 213.333333V170.666667L298.666667 384H128z' fill='%23717171' /%3E%3C/svg%3E");
+}
+
+/* Playlist */
+
+div.sound ul.sound-playlist {
+    margin: 0;
+    list-style-type: none;
+    padding: 0;
+}
+
+div.sound ul.sound-playlist li button {
+    font-family: inherit;
+    font-weight: inherit;
+    color: inherit;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-size: 1em;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    line-height: 1.5em;
+    padding: 0 5px;
+}
+div.sound ul.sound-playlist li:last-child button {
+    border-radius: 0 0 5px 5px;
+}
+div.sound ul.sound-playlist li[aria-current="true"] button {
+    background: var(--soundcurrent);
+}
+
+/* Responsive */
+
+@media screen and (max-width: 600px) {
+    div.sound div.sound-controls button.sound-mute,
+    div.sound div.sound-controls input.sound-volume {
+        display: none;
+    }
+}
+@media screen and (max-width: 400px) {
+    div.sound div.sound-controls span.sound-timedisplay {
+        display: none;
+    }
+}
+@container player (max-width: 600px) {
+    div.sound div.sound-controls button.sound-mute,
+    div.sound div.sound-controls input.sound-volume {
+        display: none;
+    }
+}
+@container player (max-width: 400px) {
+    div.sound div.sound-controls span.sound-timedisplay {
+        display: none;
+    }
+}
+
+/* Services */
+
+iframe.sound-funkwhale.track {
+    height: 150px;
+}
+iframe.sound-funkwhale.playlist,
+iframe.sound-funkwhale.album {
+    height: 330px;
+}
+iframe.sound-anghami.song {
+    height: 190px;
+}
+iframe.sound-anghami.playlist {
+    height: 450px;
+}
+iframe.sound-spotify.track {
+    height: 152px;
+}
+iframe.sound-spotify.playlist,
+iframe.sound-spotify.album {
+    height: 352px;
+}
+iframe.mixcloud {
+    height: 120px;
+}
+iframe.soundcloud {
+    height: 300px;
+}
+iframe.idagio {
+    height: 400px;
+}
