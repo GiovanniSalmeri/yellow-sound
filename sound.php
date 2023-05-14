@@ -116,7 +116,6 @@ class YellowSound {
                         $showDownloadButton = $this->yellow->system->get("soundShowDownloadLink");
                         $path = $this->yellow->lookup->findMediaDirectory("soundLocation");
                         $items = $audioType=="item" ? [ $id ] : $this->getPlayList($id);
-var_dump($items);
                         $listId = $audioType=="list" ? $id : null;
                         $sounds = [];
                         foreach ($items as $item) {
