@@ -116,6 +116,7 @@ class YellowSound {
                         $showDownloadButton = $this->yellow->system->get("soundShowDownloadLink");
                         $path = $this->yellow->lookup->findMediaDirectory("soundLocation");
                         $items = $audioType=="item" ? [ $id ] : $this->getPlayList($id);
+var_dump($items);
                         $listId = $audioType=="list" ? $id : null;
                         $sounds = [];
                         foreach ($items as $item) {
@@ -188,7 +189,8 @@ class YellowSound {
     // Get items from a M3U or PLS playlist
     private function getPlayList($id) {
         $isUrl = preg_match('/^\w+:/', $id);
-        $prefix = substr($id, 0, strrpos($id, "/")+1);
+        $lastSlash = strrpos($id, "/");
+        $prefix = $lastSlash!==false ? substr($id, 0, strrpos($id, "/")+1) : "";
         $path = $this->yellow->lookup->findMediaDirectory("soundLocation");
         $file = $isUrl ? $id : $path.$id;
         $lines = @file($file);
