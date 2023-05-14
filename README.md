@@ -35,7 +35,7 @@ The `id` is the last part of the link with which the track is accessed. In some 
 
 You should know that third-party providers collect personal data and use cookies.
 
-<a id="variables"></a>The following placeholders for titles are supported:
+<a id="placeholders"></a>The following placeholders for titles are supported:
 
 `@artist`, `@composer`, `@performer`, `@album`, `@work`, `@title`, `@subtitle`, `@disc`, `@track`, `@date`, `@genre`, `@streamname`, `@file`
 
