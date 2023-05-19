@@ -37,7 +37,7 @@ You should know that third-party providers collect personal data and use cookies
 
 <a id="placeholders"></a>The following placeholders for titles are supported:
 
-`@artist`, `@composer`, `@performer`, `@album`, `@work`, `@title`, `@subtitle`, `@disc`, `@track`, `@date`, `@genre`, `@streamname`, `@file`
+`@artist`, `@composer`, `@performer`, `@album`, `@work`, `@title`, `@subtitle`, `@disc`, `@track`, `@date`, `@genre`, `@radio`
 
 The values assigned to placeholders come from metadata, which are normally present in audio files. If necessary, you can fix them with programs known as "tag editors" (sometimes included in audio players) or with an [online service](https://tagmp3.net/).
 
