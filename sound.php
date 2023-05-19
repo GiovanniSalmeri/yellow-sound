@@ -5,7 +5,7 @@ class YellowSound {
     const VERSION = "0.8.22";
     public $yellow;         // access to API
 
-    var $soundFieldList = [ "artist", "composer", "performer", "album", "work", "title", "subtitle", "disc", "track", "date", "genre", "streamname", "file" ];
+    var $soundFieldList = [ "artist", "composer", "performer", "album", "work", "title", "subtitle", "disc", "track", "date", "genre", "radio", "file" ];
     var $separator = ", ";
 
     // Handle initialisation
@@ -15,6 +15,7 @@ class YellowSound {
         $this->yellow->system->setDefault("soundComposerAsArtist", 0);
         $this->yellow->system->setDefault("soundFileNamePattern", "@track. @artist - @title");
         $this->yellow->system->setDefault("soundDefaultTitle", "@artist, <b>@title</b> (@album, @date)");
+        $this->yellow->system->setDefault("soundDefaultTitleRadio", "<b>@radio</b>");
         $this->yellow->system->setDefault("soundShowDownloadLink", 1);
         $this->yellow->language->setDefaults([
             "Language: en",
@@ -87,11 +88,10 @@ class YellowSound {
         $output = null;
         if ($name=="sound" && ($type=="block" || $type=="inline")) {
             list($id, $label) = $this->yellow->toolbox->getTextArguments($text);
-            if (is_string_empty($label)) $label = $this->yellow->system->get("soundDefaultTitle");
             $services = [
                 "item"=> [ "/^.+\.(?:mp3|opus|ogg|flac|m4a|wav)$/i", "@path@0", "custom", null ],
                 "list"=> [ "/^.+\.(?:m3u|pls)$/i", "@path@0", "custom", null ],
-                //"url" => [ "/^\w+:.+/", "@0", "custom" ], // TODO: URL without extension
+                "url" => [ "/^\w+:.+/", "@0", "custom" ],
                 "funkwhale" => [ "/^(track|playlist|album)\/([0-9]+)@([A-Za-z0-9\-_]+(?:\.[A-Za-z0-9\-_]+)*)$/", "https://@3/front/embed.html?type=@1&id=@2", "iframe" ],
                 "spotify" => [ "/^(track|playlist|album)\/([a-zA-Z0-9]{22})$/", "https://open.spotify.com/embed/@1/@2", "iframe" ],
                 "anghami" => [ "/^(song|playlist)\/(\d+)$/", "https://widget.anghami.com/@1/@2/?theme=fulllight&layout=wide&lang=@lang", "iframe" ],
@@ -115,25 +115,29 @@ class YellowSound {
                     if ($element=="custom") {
                         $showDownloadButton = $this->yellow->system->get("soundShowDownloadLink");
                         $path = $this->yellow->lookup->findMediaDirectory("soundLocation");
-                        $items = $audioType=="item" ? [ $id ] : $this->getPlayList($id);
+                        if ($audioType=="url") {
+                            $meta = $this->getAudioMeta($id, true);
+                            $audioType = isset($meta["list"]) ? "list" : "item";
+                        }
+                        $items = $audioType=="item" ? [ $id ] : $this->getPlayList($id, $meta["list"] ?? null);
                         $listId = $audioType=="list" ? $id : null;
                         $sounds = [];
                         foreach ($items as $item) {
                             $isUrl = preg_match('/^\w+:/', $item);
                             $fileName = $isUrl ? $item : $path.$item;
-                            $meta = $this->getAudioMeta($fileName, $isUrl);
+                            $meta = $this->getAudioMeta($fileName, $isUrl, false);
                             $src = $isUrl ? $item : $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$item;
                             $cover = $isUrl ? null : $this->getCover($item, $listId);
                             if ($cover==null) {
                                 $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
-                                $coverSrc = "{$extensionLocation}sound-".(isset($meta["streamname"]) ? "stream" : "default").".svg";
+                                $coverSrc = "{$extensionLocation}sound-".(isset($meta["radio"]) ? "radio" : "default").".svg";
                             } else {
                                 $coverSrc = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$cover;
                             }
                             $sounds[] = [ "src"=>$src, "meta"=>$meta, "coverSrc"=>$coverSrc ];
                         }
 
-                        $output .= "<div class=\"sound\" aria-label=\"".htmlspecialchars($sounds[0]["meta"]["title"] ?? $sounds[0]["meta"]["streamname"] ?? $sounds[0]["meta"]["file"])."\" role=\"region\">\n";
+                        $output .= "<div class=\"sound\" aria-label=\"".htmlspecialchars($sounds[0]["meta"]["title"] ?? $sounds[0]["meta"]["radio"] ?? $sounds[0]["meta"]["file"])."\" role=\"region\">\n";
                         $output .= "<div class=\"sound-heading\">\n";
                         $output .= "<audio class=\"sound-player\" src=\"".htmlspecialchars($sounds[0]["src"])."\" preload=\"metadata\"></audio>\n";
                         $output .= "<img src=\"".htmlspecialchars($sounds[0]["coverSrc"])."\" alt=\"\" />\n";
@@ -141,7 +145,7 @@ class YellowSound {
                         if ($showDownloadButton) $output .= "<div class=\"sound-aux\"><a href=\"".htmlspecialchars($sounds[0]["src"])."\" class=\"sound-download\" download=\"".substr($sounds[0]["src"], strrpos($sounds[0]["src"], "/")+1)."\" aria-label=\"".$downloadLabel."\"></a></div>\n";
                         $output .= "<div class=\"sound-controls\">\n";
                         $output .= "<button class=\"sound-play\" aria-label=\"".$playLabel."\" aria-pressed=\"false\"></button>\n";
-                        $output .= "<input class=\"sound-timeline\" aria-label=\"".$timelineLabel."\" type=\"range\" min=\"0\" max=\"1\" aria-valuetext=\"0:00:00\" step=\"0.01\" value=\"0\" ".(isset($sounds[0]["meta"]["streamname"]) ? "disabled=\"disabled\" " : "")."/>\n";
+                        $output .= "<input class=\"sound-timeline\" aria-label=\"".$timelineLabel."\" type=\"range\" min=\"0\" max=\"1\" aria-valuetext=\"0:00:00\" step=\"0.01\" value=\"0\" ".(isset($sounds[0]["meta"]["radio"]) ? "disabled=\"disabled\" " : "")."/>\n";
                         $output .= "<span class=\"sound-timedisplay\"><time class=\"sound-time\" role=\"timer\" datetime=\"0:00:00\"></time><time class=\"sound-totaltime\" aria-label=\"".$totalTimeLabel."\"></time></span>\n";
                         $output .= "<button class=\"sound-mute\" aria-label=\"".$muteLabel."\" aria-pressed=\"false\"></button>\n";
                         $output .= "<input class=\"sound-volume\" aria-label=\"".$volumeLabel."\" type=\"range\" min=\"0\" max=\"10\" step=\"1\" value=\"10\" />\n";
@@ -186,7 +190,7 @@ class YellowSound {
     }
 
     // Get items from a M3U or PLS playlist
-    private function getPlayList($id) {
+    private function getPlayList($id, $type = null) {
         $isUrl = preg_match('/^\w+:/', $id);
         $lastSlash = strrpos($id, "/");
         $prefix = $lastSlash!==false ? substr($id, 0, strrpos($id, "/")+1) : "";
@@ -194,7 +198,7 @@ class YellowSound {
         $file = $isUrl ? $id : $path.$id;
         $lines = @file($file);
         if ($lines===false) return false;
-        $type = pathinfo($file, PATHINFO_EXTENSION);
+        $type = $type ?? pathinfo($file, PATHINFO_EXTENSION);
         $list = [];
         foreach ($lines as $line) {
             if (preg_match($type=="pls" ? '/^File(\d+)=(.+)$/' : '/^()([^#]+)$/', trim($line), $matches)) {
@@ -231,16 +235,19 @@ class YellowSound {
 
     // Make the title from metadata and pattern
     private function makeTitleHtml($meta, $titlePattern) {
-        if (isset($meta["streamname"]) || isset($meta["file"])) {
-            return "<b>".($meta["streamname"] ?? $meta["file"])."</b>";
+        if (isset($meta["file"])) {
+            return "<b>".$meta["file"]."</b>";
+        } elseif (isset($meta["radio"])) {
+            if (is_string_empty($titlePattern)) $titlePattern = $this->yellow->system->get("soundDefaultTitleRadio");
+            return str_replace("@radio", $meta["radio"], $titlePattern);
         } else {
-            //$titlePattern = $this->yellow->system->get("soundTitlePattern");
+            if (is_string_empty($titlePattern)) $titlePattern = $this->yellow->system->get("soundDefaultTitle");
             return preg_replace_callback('/@([a-z]+)/', function($key) use ($meta) { return $meta[$key[1]] ?? "—"; }, $titlePattern); // TODO better interpolation when keys are missing
         }
     }
 
     // Get the metadata, possibly from the cache
-    private function getAudioMeta($audioFile, $isUrl) {
+    private function getAudioMeta($audioFile, $isUrl, $canBePlaylist = true) {
         $liveStreamingLabel = $this->yellow->language->getTextHtml("soundLiveStreaming");
         if ($isUrl) {
             $cache = [];
@@ -251,27 +258,17 @@ class YellowSound {
                 fclose($fileHandle);
             }
             if (!isset($cache[$audioFile])) {
-                $url = $audioFile;
-                $context = stream_context_create([ "http"=>[ "follow_location"=>0 ] ]);
-                for ($redirections = 0; $url && $redirections<3; $redirections++) {
-                    $headers = @get_headers($url, true, $context);
-                    if ($headers===false) return [ "file"=>$audioFile ]; // TODO better checks
-                    $headers = array_combine(array_map("strtolower", array_keys($headers)), $headers);
-                    $url = $headers["location"] ?? null;
-                }
-                if (!isset($headers["content-length"])) {
-                    $cache[$audioFile] = [ "streamname"=>($headers["icy-name"] ?? $liveStreamingLabel) ];
-                } else {
-                    $cache[$audioFile] = $this->decodeAudioMeta($audioFile);
-                }
-                $fileHandle = @fopen($cacheFileName, "w");
-                if ($fileHandle) {
-                    if (flock($fileHandle, LOCK_EX)) {
-                        fwrite($fileHandle, json_encode($cache, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+                $cache[$audioFile] = $this->decodeAudioMetaFromUrl($audioFile, $canBePlaylist);
+                if ($cache[$audioFile]!==false) {
+                    $fileHandle = @fopen($cacheFileName, "w");
+                    if ($fileHandle) {
+                        if (flock($fileHandle, LOCK_EX)) {
+                            fwrite($fileHandle, json_encode($cache, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+                        }
+                        fclose($fileHandle);
+                    } else {
+                        $this->yellow->log("error", "Can't write file '$cacheFileName'!");
                     }
-                    fclose($fileHandle);
-                } else {
-                    $this->yellow->log("error", "Can't write file '$cacheFileName'!");
                 }
             }
             return $cache[$audioFile];
@@ -280,9 +277,57 @@ class YellowSound {
         }
     }
 
+    // Detect type of remote file and possibly extract metadata
+    private function decodeAudioMetaFromUrl($audioFile, $canBePlaylist = true) {
+        $extensions = [
+            "audio/mpeg"=>"mp3",
+            "audio/opus"=>"opus",
+            "audio/x-opus"=>"opus",
+            "audio/x-opus+ogg"=>"opus",
+            "audio/vorbis"=>"ogg",
+            "audio/x-vorbis"=>"ogg",
+            "audio/x-vorbis+ogg"=>"ogg",
+            "audio/flac"=>"flac",
+            "audio/x-flac"=>"flac",
+            "audio/mp4"=>"m4a",
+            "audio/aac"=>"m4a",
+            "audio/aacp"=>"m4a",
+            "audio/wav"=>"wav",
+            "audio/wave"=>"wav",
+            "audio/vnd.wav"=>"wav",
+            "audio/x-wav"=>"wav",
+            "audio/scpls"=>"pls",
+            "audio/x-scpls"=>"pls",
+            "audio/mpeg-url"=>"m3u",
+            "audio/x-mpegurl"=>"m3u",
+        ];
+        $liveStreamingLabel = $this->yellow->language->getTextHtml("soundLiveStreaming");
+        $url = $audioFile;
+        $context = stream_context_create([ "http"=>[ "follow_location"=>0 ] ]);
+        for ($redirections = 0; $url && $redirections<3; $redirections++) {
+            $headers = @get_headers($url, true, $context);
+            if ($headers===false) return false;
+            $headers = array_combine(array_map("strtolower", array_keys($headers)), $headers);
+            $url = $headers["location"] ?? null;
+        }
+        if (!isset($headers["content-length"])) {
+            return [ "radio"=> ($headers["icy-name"] ?? $liveStreamingLabel) ];
+        } else {
+            $ext = $extensions[$headers["content-type"] ?? null] ?? null;
+            if ($ext==null) {
+                return false;
+            } elseif (in_array($ext, [ "m3u", "pls" ])) {
+                return $canBePlaylist ? [ "list"=>$ext ] : false;
+            } else {
+                return $this->decodeAudioMeta($audioFile, $ext);
+            }
+        }
+    }
+
     // Decode metadata according the audiofile type
-    public function decodeAudioMeta($file) {
-        switch (pathinfo($file, PATHINFO_EXTENSION)) {
+    public function decodeAudioMeta($file, $ext = null) {
+        $ext = $ext ?? pathinfo($file, PATHINFO_EXTENSION);
+        switch ($ext) {
             case "mp3":
                 $meta = $this->getId3v2($file) ?? $this->getApeTag($file, false) ?? $this->getApeTag($file, true) ?? $this->getId3v1($file) ?? $this->getTagsFromFileName($file); break;
             case "opus":
@@ -688,7 +733,6 @@ class YellowSound {
     // Normalise audio tags, especially for classical music
     private function normaliseTags($meta) {
         $composerAsArtist = $this->yellow->system->get("soundComposerAsArtist");
-
         if (empty($meta)) return $meta; // if false, null or []
         $artists = [ "performer", "composer" ];
         if ($composerAsArtist) $artists = array_reverse($artists);
