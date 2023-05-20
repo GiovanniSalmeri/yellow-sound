@@ -19,6 +19,7 @@ class YellowSound {
         $this->yellow->system->setDefault("soundShowDownloadLink", 1);
         $this->yellow->language->setDefaults([
             "Language: en",
+            "soundAudioPlayer: Audio player",
             "soundPlay: Play",
             "soundTimeline: Timeline",
             "soundTotalTime: Total time",
@@ -28,6 +29,7 @@ class YellowSound {
             "soundDownload: Download",
             "soundLiveStreaming: Live broadcasting",
             "Language: it",
+            "soundAudioPlayer: Riproduttore audio",
             "soundPlay: Riproduci",
             "soundTimeline: Barra del tempo",
             "soundTotalTime: Tempo totale",
@@ -37,6 +39,7 @@ class YellowSound {
             "soundDownload: Preleva",
             "soundLiveStreaming: Trasmissione in diretta",
             "Language: fr",
+            "soundAudioPlayer: Lecteur audio",
             "soundPlay: Lire",
             "soundTimeline: Ligne du temps",
             "soundTotalTime: Temps total",
@@ -46,6 +49,7 @@ class YellowSound {
             "soundDownload: Télécharger",
             "soundLiveStreaming: Diffusion en direct",
             "Language: de",
+            "soundAudioPlayer: Audiospieler",
             "soundPlay: Wiedergeben",
             "soundTimeline: Zeitachse",
             "soundTotalTime: Gesamtzeit",
@@ -55,6 +59,7 @@ class YellowSound {
             "soundDownload: Herunterladen",
             "soundLiveStreaming: Direktübertragung",
             "Language: es",
+            "soundAudioPlayer: Reproductor de audio",
             "soundPlay: Reproducir",
             "soundTimeline: Escala de tiempo",
             "soundTotalTime: Tiempo total",
@@ -64,6 +69,7 @@ class YellowSound {
             "soundDownload: Descargar",
             "soundLiveStreaming: Transmisión en directo",
             "Language: pt",
+            "soundAudioPlayer: Leitor de áudio",
             "soundPlay: Reproduzir",
             "soundTimeline: Linha do tempo",
             "soundTotalTime: Tempo total",
@@ -73,6 +79,7 @@ class YellowSound {
             "soundDownload: Baixar",
             "soundLiveStreaming: Transmissão ao vivo",
             "Language: nl",
+            "soundAudioPlayer: Audiospeler",
             "soundPlay: Afspelen",
             "soundTimeline: Tijdlijn",
             "soundTotalTime: Totaal tijd",
@@ -102,6 +109,7 @@ class YellowSound {
             $templates = [
                 "iframe" => "<iframe width=\"100%\" class=\"sound @type @height\" src=\"@src\" frameborder=\"0\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen\" loading=\"lazy\" sandbox=\"allow-scripts allow-same-origin\"@dim><p>@src</p></iframe>",
             ];
+            $audioPlayerLabel = $this->yellow->language->getTextHtml("soundAudioPlayer");
             $downloadLabel = $this->yellow->language->getTextHtml("soundDownload");
             $playLabel = $this->yellow->language->getTextHtml("soundPlay");
             $timelineLabel = $this->yellow->language->getTextHtml("soundTimeline");
@@ -137,7 +145,7 @@ class YellowSound {
                             $sounds[] = [ "src"=>$src, "meta"=>$meta, "coverSrc"=>$coverSrc ];
                         }
 
-                        $output .= "<div class=\"sound\" aria-label=\"".htmlspecialchars($sounds[0]["meta"]["title"] ?? $sounds[0]["meta"]["radio"] ?? $sounds[0]["meta"]["file"])."\" role=\"region\">\n";
+                        $output .= "<div class=\"sound\" aria-label=\"".$audioPlayerLabel."\" role=\"region\">\n";
                         $output .= "<div class=\"sound-heading\">\n";
                         $output .= "<audio class=\"sound-player\" src=\"".htmlspecialchars($sounds[0]["src"])."\" preload=\"metadata\"></audio>\n";
                         $output .= "<img src=\"".htmlspecialchars($sounds[0]["coverSrc"])."\" alt=\"\" />\n";
