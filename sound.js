@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function() {
     sounds.forEach(function(sound) {
 
         function initTime(audioElement) {
-            var isRadio = sound.classList.contains("sound-radio");
             if (!isRadio) {
                 totaltimeElement.textContent = formatTime(audioElement.duration, audioElement.duration, isRadio);
                 totaltimeElement.setAttribute("datetime", formatTime(audioElement.duration, Infinity));
@@ -32,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
             timeElement.textContent = formatTime(0, audioElement.duration, isRadio);
         }
 
+        var isRadio = sound.classList.contains("sound-radio");
         var audioElement = sound.querySelector("audio");
         var playElement = sound.querySelector("button.sound-play");
         var timelineElement = sound.querySelector("input.sound-timeline");
@@ -55,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function() {
             this.dispatchEvent(new CustomEvent("timeupdate"));
         });
         audioElement.addEventListener("timeupdate", function() {
-            var isRadio = sound.classList.contains("sound-radio");
             var ISOTime = formatTime(this.currentTime, Infinity);
             if (!isRadio) {
                 timelineElement.value = this.currentTime / this.duration;
@@ -119,8 +118,11 @@ document.addEventListener("DOMContentLoaded", function() {
             imageElement.src = tracks[i].dataset.cover;
             if (tracks[i].dataset.radio=="1") {
                 sound.classList.add("sound-radio");
+                isRadio = true;
+
             } else {
                 sound.classList.remove("sound-radio");
+                isRadio = false;
             }
             nameElement.innerHTML = tracks[i].firstChild.innerHTML;
             tracks.forEach(function(track) {
