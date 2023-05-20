@@ -199,9 +199,10 @@ class YellowSound {
         $lines = @file($file);
         if ($lines===false) return false;
         $type = $type ?? pathinfo($file, PATHINFO_EXTENSION);
+        $regex = $type=="pls" ? '/^File(\d+)=(.+)$/' : '/^()([^#]+)$/';
         $list = [];
         foreach ($lines as $line) {
-            if (preg_match($type=="pls" ? '/^File(\d+)=(.+)$/' : '/^()([^#]+)$/', trim($line), $matches)) {
+            if (preg_match($regex, trim($line), $matches)) {
                 list($index, $src) = [ $matches[1], $matches[2] ];
                 if (preg_match('/^\w+:/', $src)) $src = rawurldecode($src);
                 $encoding = mb_detect_encoding($src, [ "UTF-8", "ISO-8859-1" ]);
