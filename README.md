@@ -24,12 +24,12 @@ The following argument are available, all but the first argument are optional:
 `url` of an audio track (MP3, OPUS, OGG, FLAC, M4A, WAV)  
 `url` of a playlist (M3U, PLS)  
 `url` of an Internet radio (MP3)  
-`id` and `instance` of a [Funkwhale](https://funkwhale.audio/) track or playlist or album, written respectively as `track/id@instance`, `playlist/id@instance`, `album/id@instance`  
-`id` of a [Anghami](https://www.anghami.com) song or playlist, written respectively as `song/id` and `playlist/id`  
+`id` and `instance` of a [Funkwhale](https://funkwhale.audio/) track or playlist or album, written respectively as `track=id@instance`, `playlist=id@instance`, `album=id@instance`  
+`id` of a [Anghami](https://www.anghami.com) song or playlist, written respectively as `song=id` and `playlist=id`  
 `id` of a [Idagio](https://app.idagio.com/) album  
 `id` of a [Mixcloud](https://www.mixcloud.com/) track  
 `id` of a [SoundCloud](https://soundcloud.com/) track  
-`id` of a [Spotify](https://open.spotify.com/) track or playlist or album, written respectively as `track/id`, `playlist/id`, `album/id`  
+`id` of a [Spotify](https://open.spotify.com/) track or playlist or album, written respectively as `track=id`, `playlist=id`, `album=id`  
 
 The `id` is the last part of the link with which the track is accessed. In some services you must look for the "embed code" in order to find it.
 

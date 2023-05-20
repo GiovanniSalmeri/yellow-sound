@@ -204,12 +204,12 @@ iframe.sound-spotify.playlist,
 iframe.sound-spotify.album {
     height: 352px;
 }
-iframe.mixcloud {
+iframe.sound-mixcloud {
     height: 120px;
 }
-iframe.soundcloud {
-    height: 300px;
+iframe.sound-soundcloud {
+    height: 150px;
 }
-iframe.idagio {
+iframe.sound-idagio {
     height: 400px;
 }
