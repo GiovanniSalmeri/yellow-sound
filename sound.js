@@ -24,11 +24,12 @@ document.addEventListener("DOMContentLoaded", function() {
     sounds.forEach(function(sound) {
 
         function initTime(audioElement) {
-            if (!timelineElement.disabled) {
-                totaltimeElement.textContent = " / "+formatTime(audioElement.duration, audioElement.duration, timelineElement.disabled);
+            var isRadio = sound.classList.contains("sound-radio");
+            if (!isRadio) {
+                totaltimeElement.textContent = formatTime(audioElement.duration, audioElement.duration, isRadio);
                 totaltimeElement.setAttribute("datetime", formatTime(audioElement.duration, Infinity));
             }
-            timeElement.textContent = formatTime(0, audioElement.duration, timelineElement.disabled);
+            timeElement.textContent = formatTime(0, audioElement.duration, isRadio);
         }
 
         var audioElement = sound.querySelector("audio");
@@ -50,17 +51,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
         audioElement.volume = 1;
         audioElement.addEventListener("loadedmetadata", function() {
-            //console.log(this.src+" "+this.duration); // DEBUG
             initTime(this);
             this.dispatchEvent(new CustomEvent("timeupdate"));
         });
         audioElement.addEventListener("timeupdate", function() {
+            var isRadio = sound.classList.contains("sound-radio");
             var ISOTime = formatTime(this.currentTime, Infinity);
-            if (!timelineElement.disabled) {
+            if (!isRadio) {
                 timelineElement.value = this.currentTime / this.duration;
                 timelineElement.setAttribute("aria-valuetext", ISOTime);
             }
-            timeElement.textContent = formatTime(this.currentTime, this.duration, timelineElement.disabled);
+            timeElement.textContent = formatTime(this.currentTime, this.duration, isRadio);
             timeElement.setAttribute("datetime", ISOTime);
         });
         audioElement.addEventListener("ended", function() {
@@ -116,6 +117,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 downloadElement.download = src.substr(src.lastIndexOf("/")+1);
             }
             imageElement.src = tracks[i].dataset.cover;
+            if (tracks[i].dataset.radio=="1") {
+                sound.classList.add("sound-radio");
+            } else {
+                sound.classList.remove("sound-radio");
+            }
             nameElement.innerHTML = tracks[i].firstChild.innerHTML;
             tracks.forEach(function(track) {
                 track.removeAttribute("aria-current");

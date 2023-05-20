@@ -145,7 +145,7 @@ class YellowSound {
                             $sounds[] = [ "src"=>$src, "meta"=>$meta, "coverSrc"=>$coverSrc ];
                         }
 
-                        $output .= "<div class=\"sound\" aria-label=\"".$audioPlayerLabel."\" role=\"region\">\n";
+                        $output .= "<div class=\"sound".(isset($meta["radio"]) ? " sound-radio" : "")."\" aria-label=\"".$audioPlayerLabel."\" role=\"region\">\n";
                         $output .= "<div class=\"sound-heading\">\n";
                         $output .= "<audio class=\"sound-player\" src=\"".htmlspecialchars($sounds[0]["src"])."\" preload=\"metadata\"></audio>\n";
                         $output .= "<img src=\"".htmlspecialchars($sounds[0]["coverSrc"])."\" alt=\"\" />\n";
@@ -153,7 +153,7 @@ class YellowSound {
                         if ($showDownloadButton) $output .= "<div class=\"sound-aux\"><a href=\"".htmlspecialchars($sounds[0]["src"])."\" class=\"sound-download\" download=\"".substr($sounds[0]["src"], strrpos($sounds[0]["src"], "/")+1)."\" aria-label=\"".$downloadLabel."\"></a></div>\n";
                         $output .= "<div class=\"sound-controls\">\n";
                         $output .= "<button class=\"sound-play\" aria-label=\"".$playLabel."\" aria-pressed=\"false\"></button>\n";
-                        $output .= "<input class=\"sound-timeline\" aria-label=\"".$timelineLabel."\" type=\"range\" min=\"0\" max=\"1\" aria-valuetext=\"0:00:00\" step=\"0.01\" value=\"0\" ".(isset($sounds[0]["meta"]["radio"]) ? "disabled=\"disabled\" " : "")."/>\n";
+                        $output .= "<input class=\"sound-timeline\" aria-label=\"".$timelineLabel."\" type=\"range\" min=\"0\" max=\"1\" aria-valuetext=\"0:00:00\" step=\"0.01\" value=\"0\" />\n";
                         $output .= "<span class=\"sound-timedisplay\"><time class=\"sound-time\" role=\"timer\" datetime=\"0:00:00\"></time><time class=\"sound-totaltime\" aria-label=\"".$totalTimeLabel."\"></time></span>\n";
                         $output .= "<button class=\"sound-mute\" aria-label=\"".$muteLabel."\" aria-pressed=\"false\"></button>\n";
                         $output .= "<input class=\"sound-volume\" aria-label=\"".$volumeLabel."\" type=\"range\" min=\"0\" max=\"10\" step=\"1\" value=\"10\" />\n";
@@ -164,6 +164,7 @@ class YellowSound {
                             foreach ($sounds as $key=>$sound) {
                                 $output .= "<li ".($key==0 ? "aria-current=\"true\" " : "");
                                 $output .= "data-cover=\"".htmlspecialchars($sound["coverSrc"])."\" ";
+                                $output .= "data-radio=\"".(isset($meta["radio"]) ? "1" : "0")."\" ";
                                 $output .= "data-src=\"".htmlspecialchars($sound["src"])."\">";
                                 $output .= "<button>".$this->makeTitleHtml($sound["meta"], $label)."</button></li>\n";
                             }
