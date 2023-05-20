@@ -59,8 +59,8 @@ Embedding an audio track, different tracks:
 
     [sound my_song.mp3]
     [sound violin/ciaccona.flac]
-    [sound album/2214@funkwhale.it]
-    [sound track/3VM35337X7Ro1tesUHnZ95]
+    [sound album=2214@funkwhale.it]
+    [sound track=3VM35337X7Ro1tesUHnZ95]
 
 Embedding a playlist:
 
