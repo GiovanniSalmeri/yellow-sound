@@ -107,7 +107,7 @@ class YellowSound {
                 "idagio" => [ "/^()([0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12})$/", "https://app.idagio.com/player?album_id=@2", "iframe" ],
             ];
             $templates = [
-                "iframe" => "<iframe width=\"100%\" class=\"sound @type @height\" src=\"@src\" frameborder=\"0\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen\" loading=\"lazy\" sandbox=\"allow-scripts allow-same-origin\"@dim><p>@src</p></iframe>",
+                "iframe" => "<iframe title=\"@title\" width=\"100%\" class=\"sound @type @height\" src=\"@src\" frameborder=\"0\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen\" loading=\"lazy\" sandbox=\"allow-scripts allow-same-origin\"@dim><p>@src</p></iframe>",
             ];
             $audioPlayerLabel = $this->yellow->language->getTextHtml("soundAudioPlayer");
             $downloadLabel = $this->yellow->language->getTextHtml("soundDownload");
@@ -174,10 +174,7 @@ class YellowSound {
                     } else {
                         $sourceTemplate = str_replace("@lang", $page->get("language"), $sourceTemplate);
                         $sourceTemplate = strtr($sourceTemplate, array_combine([ "@0", "@1", "@2", "@3" ], array_pad($matches, 4, "")));
-                        $template = $templates[$element];
-                        $template = str_replace("@type", "sound-".$audioType, $template);
-                        $template = str_replace("@height", $matches[1], $template);
-                        $template = str_replace("@src", htmlspecialchars($sourceTemplate), $template);
+                        $template = str_replace([ "@title", "@type", "@height", "@src" ], [ $audioPlayerLabel, "sound-".$audioType, $matches[1], htmlspecialchars($sourceTemplate) ], $templates[$element]);
                         $output .= $template;
                     }
                     break;
