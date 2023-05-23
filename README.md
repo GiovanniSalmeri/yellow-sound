@@ -17,6 +17,8 @@ The following argument are available, all but the first argument are optional:
 `Source` = audio source, [supported audio sources](#sources)  
 `Label` = description of the audio, wrap multiple words into quotes, [supported placeholders](#placeholders); it is ignored for third-party services  
 
+All media files are located in the media folder. The `media/sounds` folder is the place to store your audio files. You can also create additional folders and organise files as you like.
+
 <a id="sources"></a>The following audio sources are supported:
 
 `name` of an audio track (MP3, OPUS, OGG, FLAC, M4A, WAV) in the `media/sounds` folder  
@@ -78,12 +80,12 @@ Embedding an audio track, custom label:
 
 The following settings can be configured in file `system/extensions/yellow-system.ini`:
 
-`SoundLocation` (default: `/media/sounds/`) = location for audio tracks  
-`SoundDefaultTitle` (default: `@artist, <b>@title</b> (@album, @date)`) = default title for tracks  
-`SoundDefaultTitleRadio` (default: `<b>@radio</b>`) = default title for radios  
-`SoundComposerAsArtist` (default: `0`) = treat the composer (instead of the performer) as the artist  
-`SoundFileNamePattern` (default: `@track. @artist - @title"`) = pattern for scanning file names, when metadata are missing  
-`SoundShowDownloadLink` (default: `1`) = show download link, 1 or 0  
+`SoundLocation` = location for audio tracks  
+`SoundDefaultTitle` = default title for tracks  
+`SoundDefaultTitleRadio` = default title for radios  
+`SoundComposerAsArtist` = treat the composer (instead of the performer) as the artist  
+`SoundFileNamePattern` = pattern for scanning file names, when metadata are missing  
+`SoundShowDownloadLink` = show download link, 1 or 0  
 
 ## Acknowledgements
 
