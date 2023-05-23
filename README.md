@@ -12,12 +12,12 @@ Embed audio tracks.
 
 Create a `[sound]` shortcut. 
 
-The following argument are available, all but the first argument are optional:
+The following argument are available, the second argument is optional:
  
 `Source` = audio source, [supported audio sources](#sources)  
 `Label` = description of the audio, wrap multiple words into quotes, [supported placeholders](#placeholders); it is ignored for third-party services  
 
-All media files are located in the media folder. The `media/sounds` folder is the place to store your audio files. You can also create additional folders and organise files as you like.
+All media files are located in the `media` folder. The `media/sounds` folder is the place to store your audio files. You can also create additional folders and organise files as you like.
 
 <a id="sources"></a>The following audio sources are supported:
 
