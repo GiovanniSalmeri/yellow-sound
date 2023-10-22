@@ -274,7 +274,7 @@ class YellowSound {
                         }
                         fclose($fileHandle);
                     } else {
-                        $this->yellow->log("error", "Can't write file '$cacheFileName'!");
+                        $this->toolbox->log("error", "Can't write file '$cacheFileName'!");
                     }
                 }
             }
