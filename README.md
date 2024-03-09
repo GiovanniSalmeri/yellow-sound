@@ -1,4 +1,4 @@
-# Sound 0.8.22
+# Sound 0.8.23
 
 Embed audio tracks.
 
