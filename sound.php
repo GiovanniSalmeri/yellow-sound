@@ -2,7 +2,7 @@
 // Sound extension, https://github.com/GiovanniSalmeri/yellow-sound
 
 class YellowSound {
-    const VERSION = "0.8.22";
+    const VERSION = "0.8.23";
     public $yellow;         // access to API
 
     var $soundFieldList = [ "artist", "composer", "performer", "album", "work", "title", "subtitle", "disc", "track", "date", "genre", "radio", "file" ];
@@ -28,6 +28,7 @@ class YellowSound {
             "soundPlaylist: Playlist",
             "soundDownload: Download",
             "soundLiveStreaming: Live broadcasting",
+            "soundOffline: Offline",
             "Language: it",
             "soundAudioPlayer: Riproduttore audio",
             "soundPlay: Riproduci",
@@ -38,6 +39,7 @@ class YellowSound {
             "soundPlaylist: Elenco di riproduzione",
             "soundDownload: Preleva",
             "soundLiveStreaming: Trasmissione in diretta",
+            "soundOffline: Fuori linea",
             "Language: fr",
             "soundAudioPlayer: Lecteur audio",
             "soundPlay: Lire",
@@ -48,6 +50,7 @@ class YellowSound {
             "soundPlaylist: Liste de lecture",
             "soundDownload: Télécharger",
             "soundLiveStreaming: Diffusion en direct",
+            "soundOffline: Hors ligne",
             "Language: de",
             "soundAudioPlayer: Audiospieler",
             "soundPlay: Wiedergeben",
@@ -58,6 +61,7 @@ class YellowSound {
             "soundPlaylist: Wiedergabeliste",
             "soundDownload: Herunterladen",
             "soundLiveStreaming: Direktübertragung",
+            "soundOffline: Offline",
             "Language: es",
             "soundAudioPlayer: Reproductor de audio",
             "soundPlay: Reproducir",
@@ -68,6 +72,7 @@ class YellowSound {
             "soundPlaylist: Lista de reproducción",
             "soundDownload: Descargar",
             "soundLiveStreaming: Transmisión en directo",
+            "soundOffline: Fuera de línea",
             "Language: pt",
             "soundAudioPlayer: Leitor de áudio",
             "soundPlay: Reproduzir",
@@ -78,6 +83,7 @@ class YellowSound {
             "soundPlaylist: Lista de reprodução",
             "soundDownload: Baixar",
             "soundLiveStreaming: Transmissão ao vivo",
+            "soundOffline: Fora de linha",
             "Language: nl",
             "soundAudioPlayer: Audiospeler",
             "soundPlay: Afspelen",
@@ -88,6 +94,7 @@ class YellowSound {
             "soundPlaylist: Afspeellijst",
             "soundDownload: Downloaden",
             "soundLiveStreaming: Rechtstreekse uitzending",
+            "soundOffline: Offline",
         ]);
     }
 
@@ -117,6 +124,7 @@ class YellowSound {
             $muteLabel = $this->yellow->language->getTextHtml("soundMute");
             $volumeLabel = $this->yellow->language->getTextHtml("soundVolume");
             $playlistLabel = $this->yellow->language->getTextHtml("soundPlaylist");
+            $offlineLabel = $this->yellow->language->getTextHtml("soundOffline");
 
             foreach ($services as $audioType=>list($pattern, $sourceTemplate, $element)) {
                 if (preg_match($pattern, $id, $matches)) {
@@ -149,7 +157,7 @@ class YellowSound {
                         $output .= "<div class=\"sound-heading\">\n";
                         $output .= "<audio class=\"sound-player\" src=\"".htmlspecialchars($sounds[0]["src"])."\" preload=\"metadata\"></audio>\n";
                         $output .= "<img src=\"".htmlspecialchars($sounds[0]["coverSrc"])."\" alt=\"\" />\n";
-                        $output .= "<div class=\"sound-name\">".$this->makeTitleHtml($sounds[0]["meta"], $label)."</div>\n";
+                        $output .= "<div class=\"sound-name\" data-offline-label=\"".$offlineLabel."\">".$this->makeTitleHtml($sounds[0]["meta"], $label)."</div>\n";
                         if ($showDownloadButton) $output .= "<div class=\"sound-aux\"><a href=\"".htmlspecialchars($sounds[0]["src"])."\" class=\"sound-download\" download=\"".substr($sounds[0]["src"], strrpos($sounds[0]["src"], "/")+1)."\" aria-label=\"".$downloadLabel."\"></a></div>\n";
                         $output .= "<div class=\"sound-controls\">\n";
                         $output .= "<button class=\"sound-play\" aria-label=\"".$playLabel."\" aria-pressed=\"false\"></button>\n";

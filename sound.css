@@ -17,6 +17,9 @@ div.sound {
     box-sizing: border-box;
     container: player / inline-size;
 }
+div.sound[aria-disabled="true"] {
+    opacity: 0.5;
+}
 div.sound * {
     box-sizing: border-box;
 }
@@ -41,6 +44,9 @@ div.sound div.sound-name {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2; 
+}
+div.sound[aria-disabled="true"] div.sound-name::before {
+    content: "[" attr(data-offline-label) "] ";
 }
 
 /* Controls */

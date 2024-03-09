@@ -63,6 +63,9 @@ document.addEventListener("DOMContentLoaded", function() {
             timeElement.textContent = formatTime(this.currentTime, this.duration, isRadio);
             timeElement.setAttribute("datetime", ISOTime);
         });
+        audioElement.addEventListener("error", function() {
+            this.parentElement.parentElement.setAttribute("aria-disabled", "true");
+        });
         audioElement.addEventListener("ended", function() {
             playElement.setAttribute("aria-pressed", "false");
             if (currentTrack<tracks.length-1) {
@@ -72,12 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
         playElement.addEventListener("click", function() {
             if (audioElement.paused) {
                 pauseAll();
-                this.setAttribute("aria-pressed", "true");
                 audioElement.play();
             } else {
-                this.setAttribute("aria-pressed", "false");
                 audioElement.pause();
             }
+        });
+        audioElement.addEventListener("playing", function() {
+            playElement.setAttribute("aria-pressed", "true");
+        });
+        audioElement.addEventListener("pause", function() {
+            playElement.setAttribute("aria-pressed", "false");
         });
         timelineElement.addEventListener("input", function() {
             audioElement.currentTime = this.value*audioElement.duration;
