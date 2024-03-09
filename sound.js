@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var sounds = document.querySelectorAll("div.sound");
     function pauseAll() {
         sounds.forEach(function(sound) {
-            sound.querySelector("button.sound-play").setAttribute("aria-pressed", "false");
             sound.querySelector("audio").pause();
         });
     }
