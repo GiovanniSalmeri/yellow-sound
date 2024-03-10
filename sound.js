@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var nameElement =  sound.querySelector("div.sound-name");
         var downloadElement =  sound.querySelector("a.sound-download");
         var mutedVolume = null;
-	var currentTrack = 0;
+        var currentTrack = 0;
 
         timelineElement.value = 0; // Firefox
         volumeElement.value = 10; // Firefox
@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         audioElement.addEventListener("error", function() {
             this.parentElement.parentElement.setAttribute("aria-disabled", "true");
+            playElement.setAttribute("aria-pressed", "false");
         });
         audioElement.addEventListener("ended", function() {
             playElement.setAttribute("aria-pressed", "false");
@@ -80,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
         audioElement.addEventListener("playing", function() {
+            this.parentElement.parentElement.removeAttribute("aria-disabled");
             playElement.setAttribute("aria-pressed", "true");
         });
         audioElement.addEventListener("pause", function() {
