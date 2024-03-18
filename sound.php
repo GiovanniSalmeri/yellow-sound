@@ -17,7 +17,7 @@ class YellowSound {
         $this->yellow->system->setDefault("soundDefaultTitle", "@artist, <b>@title</b> (@album, @date)");
         $this->yellow->system->setDefault("soundDefaultTitleRadio", "<b>@radio</b>");
         $this->yellow->system->setDefault("soundShowDownloadLink", 1);
-        $this->yellow->language->setDefaults([
+        $this->yellow->language->setDefaults(array(
             "Language: en",
             "soundAudioPlayer: Audio player",
             "soundPlay: Play",
@@ -95,7 +95,7 @@ class YellowSound {
             "soundDownload: Downloaden",
             "soundLiveStreaming: Rechtstreekse uitzending",
             "soundOffline: Offline",
-        ]);
+        ));
     }
 
     public function onParseContentShortcut($page, $name, $text, $type) {
