@@ -2,7 +2,7 @@
 // Sound extension, https://github.com/GiovanniSalmeri/yellow-sound
 
 class YellowSound {
-    const VERSION = "0.8.23";
+    const VERSION = "0.9.1";
     public $yellow;         // access to API
 
     var $soundFieldList = [ "artist", "composer", "performer", "album", "work", "title", "subtitle", "disc", "track", "date", "genre", "radio", "file" ];
@@ -98,7 +98,7 @@ class YellowSound {
         ));
     }
 
-    public function onParseContentShortcut($page, $name, $text, $type) {
+    public function onParseContentElement($page, $name, $text, $attributes, $type) {
         $output = null;
         if ($name=="sound" && ($type=="block" || $type=="inline")) {
             list($id, $label) = $this->yellow->toolbox->getTextArguments($text);
@@ -145,8 +145,8 @@ class YellowSound {
                             $src = $isUrl ? $item : $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$item;
                             $cover = $isUrl ? null : $this->getCover($item, $listId);
                             if ($cover==null) {
-                                $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
-                                $coverSrc = "{$extensionLocation}sound-".(isset($meta["radio"]) ? "radio" : "default").".svg";
+                                $assetLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreAssetLocation");
+                                $coverSrc = "{$assetLocation}sound-".(isset($meta["radio"]) ? "radio" : "default").".svg";
                             } else {
                                 $coverSrc = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$cover;
                             }
@@ -196,9 +196,9 @@ class YellowSound {
     public function onParsePageExtra($page, $name) {
         $output = null;
         if ($name=="header") {
-            $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
-            $output = "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$extensionLocation}sound.css\" />\n";
-            $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}sound.js\"></script>\n";
+            $assetLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreAssetLocation");
+            $output = "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$assetLocation}sound.css\" />\n";
+            $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$assetLocation}sound.js\"></script>\n";
         }
         return $output;
     }
@@ -266,7 +266,9 @@ class YellowSound {
         $liveStreamingLabel = $this->yellow->language->getTextHtml("soundLiveStreaming");
         if ($isUrl) {
             $cache = [];
-            $cacheFileName = $this->yellow->system->get("coreExtensionDirectory")."sound.json";
+            $cacheDirectory = $this->yellow->system->get("coreCacheDirectory");
+            if ($cacheDirectory!=="" && !is_dir($cacheDirectory)) @mkdir($cacheDirectory, 0777, true);
+            $cacheFileName = $cacheDirectory."sound.json";
             $fileHandle = @fopen($cacheFileName, "r");
             if ($fileHandle) {
                 $cache = json_decode(fread($fileHandle, fstat($fileHandle)["size"]), true);

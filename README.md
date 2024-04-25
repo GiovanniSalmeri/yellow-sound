@@ -1,4 +1,4 @@
-# Sound 0.8.23
+# Sound 0.9.1
 
 Embed audio tracks.
 
@@ -86,6 +86,8 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `SoundComposerAsArtist` = treat the composer (instead of the performer) as the artist  
 `SoundFileNamePattern` = pattern for scanning file names, when metadata are missing  
 `SoundShowDownloadLink` = show download link, 1 or 0  
+
+Use [Perpage](https://github.com/GiovanniSalmeri/yellow-perpage) if you want to ovverride these settings for a single page.
 
 ## Acknowledgements
 
