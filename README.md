@@ -83,7 +83,7 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `SoundLocation` = location for audio tracks  
 `SoundDefaultTitle` = default title for tracks  
 `SoundDefaultTitleRadio` = default title for radios  
-`SoundComposerAsArtist` = treat the composer (instead of the performer) as the artist  
+`SoundComposerAsArtist` = treat the composer (instead of the performer) as the artist, 1 or 0  
 `SoundFileNamePattern` = pattern for scanning file names, when metadata are missing  
 `SoundShowDownloadLink` = show download link, 1 or 0  
 
