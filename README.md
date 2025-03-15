@@ -87,8 +87,6 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `SoundFileNamePattern` = pattern for scanning file names, when metadata are missing  
 `SoundShowDownloadLink` = show download link, 1 or 0  
 
-Use [Perpage](https://github.com/GiovanniSalmeri/yellow-perpage) if you want to ovverride these settings for a single page.
-
 ## Acknowledgements
 
 This extension uses [various sources](#sources) for the audio tracks. Thank you for the services.
