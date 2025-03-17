@@ -19,13 +19,13 @@ The following argument are available, the second argument is optional:
 
 The audio formats MP3, OPUS, OGG, FLAC, M4A and WAV and the playlist formats M3U and PLS are supported. All media files are located in the `media` folder. The `media/sounds` folder is the place to store your audio files. You can also create additional folders and organise files as you like.
 
-<a id="placeholders"></a>The following placeholders for titles are supported:
+<a id="placeholders"></a>The following placeholders for labels are supported:
 
 `@artist`, `@composer`, `@performer`, `@album`, `@work`, `@title`, `@subtitle`, `@disc`, `@track`, `@date`, `@genre`, `@radio`
 
-The values assigned to placeholders come from metadata, which are normally present in audio files. If necessary, you can fix them with programs known as "tag editors" (sometimes included in audio players) or with an [online service](https://tagmp3.net/).
+The values assigned to placeholders come from metadata, which are normally present in audio files. You can add or edit them with programs known as "tag editors" (sometimes included in audio players) or with an [online service](https://tagmp3.net/).
 
-If you want an image to be shown in the custom player, place it in the same folder as the audio file or playlist, with the name of the latter (e.g. `my_song.jpg`) or `cover` (e.g. `cover.jpg`).
+If you want an image to be shown in the player, place it in the same folder as the audio file or playlist, with the name of the latter (e.g. `my_song.jpg`) or `cover` (e.g. `cover.jpg`).
 
 For embedding audio tracks from streaming services there is the [Embed](https://github.com/GiovanniSalmeri/yellow-embed) extension.
 
