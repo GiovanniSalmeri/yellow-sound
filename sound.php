@@ -2,7 +2,7 @@
 // Sound extension, https://github.com/GiovanniSalmeri/yellow-sound
 
 class YellowSound {
-    const VERSION = "0.9.1";
+    const VERSION = "0.9.2";
     public $yellow;         // access to API
 
     var $soundFieldList = [ "artist", "composer", "performer", "album", "work", "title", "subtitle", "disc", "track", "date", "genre", "radio", "file" ];
@@ -103,20 +103,16 @@ class YellowSound {
         $output = null;
         if ($name=="sound" && ($type=="block" || $type=="inline")) {
             list($id, $label) = $this->yellow->toolbox->getTextArguments($text);
-            $services = [
-                "item"=> [ "/^.+\.(?:mp3|opus|ogg|flac|m4a|wav)$/i", "@path@0", "custom", null ],
-                "list"=> [ "/^.+\.(?:m3u|pls)$/i", "@path@0", "custom", null ],
-                "url" => [ "/^\w+:.+/", "@0", "custom" ],
-                "funkwhale" => [ "/^(track|playlist|album)=([0-9]+)@([A-Za-z0-9\-_]+(?:\.[A-Za-z0-9\-_]+)*)$/", "https://@3/front/embed.html?type=@1&id=@2", "iframe" ],
-                "spotify" => [ "/^(track|playlist|album)=([a-zA-Z0-9]{22})$/", "https://open.spotify.com/embed/@1/@2", "iframe" ],
-                "anghami" => [ "/^(song|playlist)=(\d+)$/", "https://widget.anghami.com/@1/@2/?theme=fulllight&layout=wide&lang=@lang", "iframe" ],
-                "mixcloud" => [ "/^()(\/[^\/]+\/[^\/]+\/)$/", "https://www.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=@2", "iframe" ],
-                "soundcloud" => [ "/^()([A-Za-z0-9\-]+\/[A-Za-z0-9\-]+)$/", "https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/@2&visual=true&sharing=false", "iframe" ],
-                "idagio" => [ "/^()([0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12})$/", "https://app.idagio.com/player?album_id=@2", "iframe" ],
-            ];
-            $templates = [
-                "iframe" => "<iframe title=\"@title\" width=\"100%\" class=\"sound @type @height\" src=\"@src\" frameborder=\"0\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen\" loading=\"lazy\" sandbox=\"allow-scripts allow-same-origin\"@dim><p>@src</p></iframe>",
-            ];
+            if (preg_match("/^\w+:.+/", $id)) {
+                $audioType = "url";
+            } elseif (preg_match("/^.+\.(?:mp3|opus|ogg|flac|m4a|wav)$/i", $id)) {
+                $audioType = "item";
+            } elseif (preg_match("/^.+\.(?:m3u|pls)$/i", $id)) {
+                $audioType = "list";
+            } else {
+                return null;
+            }
+
             $audioPlayerLabel = $this->yellow->language->getTextHtml("soundAudioPlayer");
             $downloadLabel = $this->yellow->language->getTextHtml("soundDownload");
             $playLabel = $this->yellow->language->getTextHtml("soundPlay");
@@ -126,69 +122,57 @@ class YellowSound {
             $volumeLabel = $this->yellow->language->getTextHtml("soundVolume");
             $playlistLabel = $this->yellow->language->getTextHtml("soundPlaylist");
             $offlineLabel = $this->yellow->language->getTextHtml("soundOffline");
+            $showDownloadButton = $this->yellow->system->get("soundShowDownloadLink");
 
-            foreach ($services as $audioType=>list($pattern, $sourceTemplate, $element)) {
-                if (preg_match($pattern, $id, $matches)) {
-                    if ($element=="custom") {
-                        $showDownloadButton = $this->yellow->system->get("soundShowDownloadLink");
-                        $path = $this->yellow->lookup->findMediaDirectory("soundLocation");
-                        if ($audioType=="url") {
-                            $meta = $this->getAudioMeta($id, true);
-                            $audioType = isset($meta["list"]) ? "list" : "item";
-                        }
-                        $items = $audioType=="item" ? [ $id ] : $this->getPlayList($id, $meta["list"] ?? null);
-                        $listId = $audioType=="list" ? $id : null;
-                        $sounds = [];
-                        foreach ($items as $item) {
-                            $isUrl = preg_match('/^\w+:/', $item);
-                            $fileName = $isUrl ? $item : $path.$item;
-                            $meta = $this->getAudioMeta($fileName, $isUrl, false);
-                            $src = $isUrl ? $item : $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$item;
-                            $cover = $isUrl ? null : $this->getCover($item, $listId);
-                            if ($cover==null) {
-                                $assetLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreAssetLocation");
-                                $coverSrc = "{$assetLocation}sound-".(isset($meta["radio"]) ? "radio" : "default").".svg";
-                            } else {
-                                $coverSrc = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$cover;
-                            }
-                            $sounds[] = [ "src"=>$src, "meta"=>$meta, "coverSrc"=>$coverSrc ];
-                        }
-
-                        $output .= "<div class=\"sound".(isset($meta["radio"]) ? " sound-radio" : "")."\" aria-label=\"".$audioPlayerLabel."\" role=\"region\">\n";
-                        $output .= "<div class=\"sound-heading\">\n";
-                        $output .= "<audio class=\"sound-player\" src=\"".htmlspecialchars($sounds[0]["src"])."\" preload=\"metadata\"></audio>\n";
-                        $output .= "<img src=\"".htmlspecialchars($sounds[0]["coverSrc"])."\" alt=\"\" />\n";
-                        $output .= "<div class=\"sound-name\" data-offline-label=\"".$offlineLabel."\">".$this->makeTitleHtml($sounds[0]["meta"], $label)."</div>\n";
-                        if ($showDownloadButton) $output .= "<div class=\"sound-aux\"><a href=\"".htmlspecialchars($sounds[0]["src"])."\" class=\"sound-download\" download=\"".substr($sounds[0]["src"], strrpos($sounds[0]["src"], "/")+1)."\" aria-label=\"".$downloadLabel."\"></a></div>\n";
-                        $output .= "<div class=\"sound-controls\">\n";
-                        $output .= "<button class=\"sound-play\" aria-label=\"".$playLabel."\" aria-pressed=\"false\"></button>\n";
-                        $output .= "<input class=\"sound-timeline\" aria-label=\"".$timelineLabel."\" type=\"range\" min=\"0\" max=\"1\" aria-valuetext=\"0:00:00\" step=\"0.01\" value=\"0\" />\n";
-                        $output .= "<span class=\"sound-timedisplay\"><time class=\"sound-time\" role=\"timer\" datetime=\"0:00:00\"></time><time class=\"sound-totaltime\" aria-label=\"".$totalTimeLabel."\"></time></span>\n";
-                        $output .= "<button class=\"sound-mute\" aria-label=\"".$muteLabel."\" aria-pressed=\"false\"></button>\n";
-                        $output .= "<input class=\"sound-volume\" aria-label=\"".$volumeLabel."\" type=\"range\" min=\"0\" max=\"10\" step=\"1\" value=\"10\" />\n";
-                        $output .= "</div>\n";
-                        $output .= "</div>\n";
-                        if (count($sounds)>1) {
-                            $output .= "<ul class=\"sound-playlist\" aria-label=\"".$playlistLabel."\">\n";
-                            foreach ($sounds as $key=>$sound) {
-                                $output .= "<li ".($key==0 ? "aria-current=\"true\" " : "");
-                                $output .= "data-cover=\"".htmlspecialchars($sound["coverSrc"])."\" ";
-                                $output .= "data-radio=\"".(isset($meta["radio"]) ? "1" : "0")."\" ";
-                                $output .= "data-src=\"".htmlspecialchars($sound["src"])."\">";
-                                $output .= "<button>".$this->makeTitleHtml($sound["meta"], $label)."</button></li>\n";
-                            }
-                            $output .= "</ul>\n";
-                        }
-                        $output .= "</div>\n";
-                    } else {
-                        $sourceTemplate = str_replace("@lang", $page->get("language"), $sourceTemplate);
-                        $sourceTemplate = strtr($sourceTemplate, array_combine([ "@0", "@1", "@2", "@3" ], array_pad($matches, 4, "")));
-                        $template = str_replace([ "@title", "@type", "@height", "@src" ], [ $audioPlayerLabel, "sound-".$audioType, $matches[1], htmlspecialchars($sourceTemplate) ], $templates[$element]);
-                        $output .= $template;
-                    }
-                    break;
-                }
+            $path = $this->yellow->lookup->findMediaDirectory("soundLocation");
+            if ($audioType=="url") {
+                $meta = $this->getAudioMeta($id, true);
+                $audioType = isset($meta["list"]) ? "list" : "item";
             }
+            $items = $audioType=="item" ? [ $id ] : $this->getPlayList($id, $meta["list"] ?? null);
+            $listId = $audioType=="list" ? $id : null;
+            $sounds = [];
+            foreach ($items as $item) {
+                $isUrl = preg_match('/^\w+:/', $item);
+                $fileName = $isUrl ? $item : $path.$item;
+                $meta = $this->getAudioMeta($fileName, $isUrl, false);
+                $src = $isUrl ? $item : $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$item;
+                $cover = $isUrl ? null : $this->getCover($item, $listId);
+                if ($cover==null) {
+                    $assetLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreAssetLocation");
+                    $coverSrc = "{$assetLocation}sound-".(isset($meta["radio"]) ? "radio" : "default").".svg";
+                } else {
+                    $coverSrc = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("soundLocation").$cover;
+                }
+                $sounds[] = [ "src"=>$src, "meta"=>$meta, "coverSrc"=>$coverSrc ];
+            }
+
+            $output .= "<div class=\"sound".(isset($meta["radio"]) ? " sound-radio" : "")."\" aria-label=\"".$audioPlayerLabel."\" role=\"region\">\n";
+            $output .= "<div class=\"sound-heading\">\n";
+            $output .= "<audio class=\"sound-player\" src=\"".htmlspecialchars($sounds[0]["src"])."\" preload=\"metadata\"></audio>\n";
+            $output .= "<img src=\"".htmlspecialchars($sounds[0]["coverSrc"])."\" alt=\"\" />\n";
+            $output .= "<div class=\"sound-name\" data-offline-label=\"".$offlineLabel."\">".$this->makeTitleHtml($sounds[0]["meta"], $label)."</div>\n";
+            if ($showDownloadButton) $output .= "<div class=\"sound-aux\"><a href=\"".htmlspecialchars($sounds[0]["src"])."\" class=\"sound-download\" download=\"".substr($sounds[0]["src"], strrpos($sounds[0]["src"], "/")+1)."\" aria-label=\"".$downloadLabel."\"></a></div>\n";
+            $output .= "<div class=\"sound-controls\">\n";
+            $output .= "<button class=\"sound-play\" aria-label=\"".$playLabel."\" aria-pressed=\"false\"></button>\n";
+            $output .= "<input class=\"sound-timeline\" aria-label=\"".$timelineLabel."\" type=\"range\" min=\"0\" max=\"1\" aria-valuetext=\"0:00:00\" step=\"0.01\" value=\"0\" />\n";
+            $output .= "<span class=\"sound-timedisplay\"><time class=\"sound-time\" role=\"timer\" datetime=\"0:00:00\"></time><time class=\"sound-totaltime\" aria-label=\"".$totalTimeLabel."\"></time></span>\n";
+            $output .= "<button class=\"sound-mute\" aria-label=\"".$muteLabel."\" aria-pressed=\"false\"></button>\n";
+            $output .= "<input class=\"sound-volume\" aria-label=\"".$volumeLabel."\" type=\"range\" min=\"0\" max=\"10\" step=\"1\" value=\"10\" />\n";
+            $output .= "</div>\n";
+            $output .= "</div>\n";
+            if (count($sounds)>1) {
+                $output .= "<ul class=\"sound-playlist\" aria-label=\"".$playlistLabel."\">\n";
+                foreach ($sounds as $key=>$sound) {
+                    $output .= "<li ".($key==0 ? "aria-current=\"true\" " : "");
+                    $output .= "data-cover=\"".htmlspecialchars($sound["coverSrc"])."\" ";
+                    $output .= "data-radio=\"".(isset($meta["radio"]) ? "1" : "0")."\" ";
+                    $output .= "data-src=\"".htmlspecialchars($sound["src"])."\">";
+                    $output .= "<button>".$this->makeTitleHtml($sound["meta"], $label)."</button></li>\n";
+                }
+                $output .= "</ul>\n";
+            }
+            $output .= "</div>\n";
         }
         return $output;
     }

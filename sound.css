@@ -199,35 +199,3 @@ div.sound ul.sound-playlist li[aria-current="true"] button {
         display: none;
     }
 }
-
-/* Services */
-
-iframe.sound-funkwhale.track {
-    height: 150px;
-}
-iframe.sound-funkwhale.playlist,
-iframe.sound-funkwhale.album {
-    height: 330px;
-}
-iframe.sound-anghami.song {
-    height: 190px;
-}
-iframe.sound-anghami.playlist {
-    height: 450px;
-}
-iframe.sound-spotify.track {
-    height: 152px;
-}
-iframe.sound-spotify.playlist,
-iframe.sound-spotify.album {
-    height: 352px;
-}
-iframe.sound-mixcloud {
-    height: 120px;
-}
-iframe.sound-soundcloud {
-    height: 150px;
-}
-iframe.sound-idagio {
-    height: 400px;
-}
