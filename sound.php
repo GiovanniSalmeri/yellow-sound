@@ -2,7 +2,7 @@
 // Sound extension, https://github.com/GiovanniSalmeri/yellow-sound
 
 class YellowSound {
-    const VERSION = "0.9.2";
+    const VERSION = "1.0.0";
     public $yellow;         // access to API
 
     var $soundFieldList = [ "artist", "composer", "performer", "album", "work", "title", "subtitle", "disc", "track", "date", "genre", "radio", "file" ];
@@ -182,8 +182,8 @@ class YellowSound {
         $output = null;
         if ($name=="header") {
             $assetLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreAssetLocation");
-            $output = "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$assetLocation}sound.css\" />\n";
-            $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$assetLocation}sound.js\"></script>\n";
+            $output = "<link rel=\"stylesheet\" media=\"all\" href=\"{$assetLocation}sound.css\" />\n";
+            $output .= "<script defer=\"defer\" src=\"{$assetLocation}sound.js\"></script>\n";
         }
         return $output;
     }
